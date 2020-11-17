@@ -1,2 +1,17 @@
 Starting audit...
+[ERROR] E:\Fac\tema-1-poo\.\src\main\Database.java:9:28: Variable 'shows' must be private and have accessor methods. [VisibilityModifier]
+[ERROR] E:\Fac\tema-1-poo\.\src\main\Database.java:15:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] E:\Fac\tema-1-poo\.\src\main\Database.java:15:26: Parameter input should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:12:17: Parameter title should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:12:31: Parameter year should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:12:41: Parameter cast should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:12:65: Parameter genres should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:19:5: Class 'Show' looks like designed for extension (can be subclassed), but the method 'addView' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Show' final or making the method 'addView' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:19:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:23:5: Class 'Show' looks like designed for extension (can be subclassed), but the method 'getTitle' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Show' final or making the method 'getTitle' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:27:5: Class 'Show' looks like designed for extension (can be subclassed), but the method 'getYear' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Show' final or making the method 'getYear' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:31:5: Class 'Show' looks like designed for extension (can be subclassed), but the method 'getCast' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Show' final or making the method 'getCast' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:35:5: Class 'Show' looks like designed for extension (can be subclassed), but the method 'getGenres' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Show' final or making the method 'getGenres' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Show.java:39:5: Class 'Show' looks like designed for extension (can be subclassed), but the method 'getViews' does not have javadoc that explains how to do that safely. If class is not designed for extension consider making the class 'Show' final or making the method 'getViews' static/final/abstract/empty, or adding allowed annotation for the method. [DesignForExtension]
 Audit done.
+Checkstyle ends with 14 errors.
