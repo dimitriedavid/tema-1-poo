@@ -70,8 +70,8 @@ public final class Main {
         Writer fileWriter = new Writer(filePath2);
         JSONArray arrayResult = new JSONArray();
 
-        // New DB
-        Database database = new Database();
+        // New clean DB
+        Database database = Database.getNewInstance();
 
         // Populate DB -> add input to database
         database.populate(input);

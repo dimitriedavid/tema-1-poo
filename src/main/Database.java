@@ -4,6 +4,7 @@ import fileio.Input;
 import models.*;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 public class Database {
     private ArrayList<Actor> actors = new ArrayList<>();
@@ -11,7 +12,22 @@ public class Database {
     private ArrayList<Show> shows = new ArrayList<>();
     private ArrayList<Action> actions = new ArrayList<>();
 
-    public Database() {
+    // singleton
+    private static Database instance = null;
+
+    private Database() { }
+
+    // clean new database
+    public static Database getNewInstance() {
+        instance = new Database();
+        return instance;
+    }
+
+    public static Database getInstance() {
+        if (instance == null) {
+            instance = new Database();
+        }
+        return instance;
     }
 
     // populate
@@ -93,5 +109,13 @@ public class Database {
 
     public ArrayList<Action> getActions() {
         return actions;
+    }
+
+    public User getUserByUsername(String username) {
+        return users.stream().filter(x -> username.equals(x.getUsername())).findFirst().get();
+    }
+
+    public Show getShowByTitle(String title) {
+        return shows.stream().filter(x -> title.equals(x.getTitle())).findFirst().get();
     }
 }

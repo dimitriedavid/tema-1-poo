@@ -1,6 +1,11 @@
 package main;
 
+import action.ActionCommon;
+import action.Command;
+import action.Query;
+import action.Recommendation;
 import common.Constants;
+import jdk.jshell.spi.ExecutionControl;
 import models.Action;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -33,7 +38,7 @@ public class ActionWorker {
     public void executeAllActions(JSONArray arrayResult) {
         database.getActions().forEach(action -> {
             // exec action
-            ActionResult result = execute(action);
+            ActionResult result = externalExecute(action);
 
             // gen JSON Obj
             JSONObject object = new JSONObject();
@@ -45,7 +50,32 @@ public class ActionWorker {
         });
     }
 
-    private ActionResult execute(Action action) {
-        return new ActionResult(1, "test");
+    // actual action parsing
+    private ActionResult externalExecute(Action action) {
+        // get action class based on action_type
+        ActionCommon actionCommon;
+
+        try {
+            switch (action.getActionType()) {
+                case "command":
+                    actionCommon = new Command(action);
+                    break;
+                case "query":
+                    actionCommon = new Query(action);
+                    break;
+                case "recommendation":
+                    actionCommon = new Recommendation(action);
+                    break;
+                default:
+                    throw new ExecutionControl.NotImplementedException("action type not implemented");
+            }
+        } catch (Exception e) {
+            return null;
+        }
+
+        // execute external action based on type
+        String result = actionCommon.execute();
+
+        return new ActionResult(action.getActionId(), result);
     }
 }
