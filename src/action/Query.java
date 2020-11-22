@@ -2,8 +2,8 @@ package action;
 
 import models.Action;
 
-public class Query extends ActionCommon {
-    public Query(Action action) {
+public final class Query extends ActionCommon {
+    public Query(final Action action) {
         super(action);
     }
 

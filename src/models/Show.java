@@ -9,34 +9,31 @@ public abstract class Show {
     private final ArrayList<String> genres;
     private int views = 0;
 
-    public Show(final String title, final int year, final ArrayList<String> cast, final ArrayList<String> genres) {
+    public Show(final String title, final int year, final ArrayList<String> cast,
+                final ArrayList<String> genres) {
         this.title = title;
         this.year = year;
         this.cast = cast;
         this.genres = genres;
     }
 
-    public void addView() {
-        this.views++;
-    }
-
-    public String getTitle() {
+    public final String getTitle() {
         return title;
     }
 
-    public int getYear() {
+    public final int getYear() {
         return year;
     }
 
-    public ArrayList<String> getCast() {
+    public final ArrayList<String> getCast() {
         return cast;
     }
 
-    public ArrayList<String> getGenres() {
+    public final ArrayList<String> getGenres() {
         return genres;
     }
 
-    public int getViews() {
+    public final int getViews() {
         return views;
     }
 }

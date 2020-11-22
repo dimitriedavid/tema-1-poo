@@ -1,28 +1,38 @@
 package main;
 
 import fileio.Input;
-import models.*;
+import models.Action;
+import models.Actor;
+import models.Show;
+import models.User;
+import models.Movie;
+import models.Serial;
 
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
-public class Database {
-    private ArrayList<Actor> actors = new ArrayList<>();
-    private ArrayList<User> users = new ArrayList<>();
-    private ArrayList<Show> shows = new ArrayList<>();
-    private ArrayList<Action> actions = new ArrayList<>();
+public final class Database {
+    private final ArrayList<Actor> actors = new ArrayList<>();
+    private final ArrayList<User> users = new ArrayList<>();
+    private final ArrayList<Show> shows = new ArrayList<>();
+    private final ArrayList<Action> actions = new ArrayList<>();
 
     // singleton
     private static Database instance = null;
 
-    private Database() { }
+    private Database() {
+    }
 
-    // clean new database
+    /**
+     * @return new clean database
+     */
     public static Database getNewInstance() {
         instance = new Database();
         return instance;
     }
 
+    /**
+     * @return current database
+     */
     public static Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -30,69 +40,79 @@ public class Database {
         return instance;
     }
 
-    // populate
-    public void populate(Input input) {
+    /**
+     * Parses <code>input</code> to populate the {@link Database}
+     * class.
+     *
+     * @param input from json
+     */
+    public void populate(final Input input) {
         // actors
-        input.getActors().forEach(actor -> actors.add(
-            new Actor(
-                actor.getName(),
-                actor.getCareerDescription(),
-                actor.getFilmography(),
-                actor.getAwards()
-            )
-        ));
+        input.getActors()
+             .forEach(actor -> actors.add(
+                     new Actor(
+                             actor.getName(),
+                             actor.getCareerDescription(),
+                             actor.getFilmography(),
+                             actor.getAwards()
+                     )
+             ));
 
         // users
-        input.getUsers().forEach(user -> users.add(
-            new User(
-                user.getUsername(),
-                user.getSubscriptionType(),
-                user.getHistory(),
-                user.getFavoriteMovies()
-            )
-        ));
+        input.getUsers()
+             .forEach(user -> users.add(
+                     new User(
+                             user.getUsername(),
+                             user.getSubscriptionType(),
+                             user.getHistory(),
+                             user.getFavoriteMovies()
+                     )
+             ));
 
         // movies
-        input.getMovies().forEach(movie -> shows.add(
-            new Movie(
-                movie.getTitle(),
-                movie.getYear(),
-                movie.getCast(),
-                movie.getGenres(),
-                movie.getDuration()
-            )
-        ));
+        input.getMovies()
+             .forEach(movie -> shows.add(
+                     new Movie(
+                             movie.getTitle(),
+                             movie.getYear(),
+                             movie.getCast(),
+                             movie.getGenres(),
+                             movie.getDuration()
+                     )
+             ));
 
         // serials
-        input.getSerials().forEach(serial -> shows.add(
-            new Serial(
-                serial.getTitle(),
-                serial.getYear(),
-                serial.getCast(),
-                serial.getGenres(),
-                serial.getNumberSeason(),
-                serial.getSeasons()
-            )
-        ));
+        input.getSerials()
+             .forEach(serial -> shows.add(
+                     new Serial(
+                             serial.getTitle(),
+                             serial.getYear(),
+                             serial.getCast(),
+                             serial.getGenres(),
+                             serial.getNumberSeason(),
+                             serial.getSeasons()
+                     )
+             ));
 
         // actions
-        input.getCommands().forEach(cmd -> actions.add(
-            new Action(
-                cmd.getActionId(),
-                cmd.getActionType(),
-                cmd.getType(),
-                cmd.getUsername(),
-                cmd.getObjectType(),
-                cmd.getSortType(),
-                cmd.getCriteria(),
-                cmd.getTitle(),
-                cmd.getGenre(),
-                cmd.getNumber(),
-                cmd.getGrade(),
-                cmd.getSeasonNumber(),
-                cmd.getFilters()
-            )
-        ));
+        input.getCommands()
+             .forEach(cmd -> actions.add(
+                     new Action(
+                             cmd.getActionId(),
+                             cmd.getActionType(),
+                             cmd.getType(),
+                             cmd.getUsername(),
+                             cmd.getObjectType(),
+                             cmd.getSortType(),
+                             cmd.getCriteria(),
+                             cmd.getTitle(),
+                             cmd.getGenre(),
+                             cmd.getNumber(),
+                             cmd.getGrade(),
+                             cmd.getSeasonNumber(),
+                             cmd.getFilters()
+                     )
+             ));
     }
 
     public ArrayList<Actor> getActors() {
@@ -111,11 +131,29 @@ public class Database {
         return actions;
     }
 
-    public User getUserByUsername(String username) {
-        return users.stream().filter(x -> username.equals(x.getUsername())).findFirst().get();
+    /**
+     * Search username in database and return it.
+     *
+     * @param username to be searched
+     * @return found user or null
+     */
+    public User getUserByUsername(final String username) {
+        return users.stream()
+                    .filter(x -> username.equals(x.getUsername()))
+                    .findFirst()
+                    .orElse(null);
     }
 
-    public Show getShowByTitle(String title) {
-        return shows.stream().filter(x -> title.equals(x.getTitle())).findFirst().get();
+    /**
+     * Search show in database and return it.
+     *
+     * @param title to be searched
+     * @return found show or null
+     */
+    public Show getShowByTitle(final String title) {
+        return shows.stream()
+                    .filter(x -> title.equals(x.getTitle()))
+                    .findFirst()
+                    .orElse(null);
     }
 }

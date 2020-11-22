@@ -7,22 +7,21 @@ import models.User;
 
 import java.util.Map;
 
-public class Command extends ActionCommon {
-    public Command(Action action) {
+public final class Command extends ActionCommon {
+    public Command(final Action action) {
         super(action);
     }
 
     @Override
     public String execute() {
         try {
-            switch (action.getType()) {
-                case "view":
-                    return view();
-                default:
-                    throw new ExecutionControl.NotImplementedException("action not implemented");
-            }
+            return switch (action.getType()) {
+                case "view" -> view();
+                default -> throw new ExecutionControl.NotImplementedException("action not"
+                        + "implemented");
+            };
         } catch (Exception e) {
-            return null;
+            return e.getMessage();
         }
     }
 
@@ -32,10 +31,10 @@ public class Command extends ActionCommon {
 
         Map<String, Integer> history = user.getHistory();
 
-        Integer no_views = history.getOrDefault(show.getTitle(), 0);
-        no_views += 1;
-        history.put(show.getTitle(), no_views);
+        Integer noViews = history.getOrDefault(show.getTitle(), 0);
+        noViews += 1;
+        history.put(show.getTitle(), noViews);
 
-        return "success -> " + show.getTitle() + " was viewed with total views of " + no_views;
+        return "success -> " + show.getTitle() + " was viewed with total views of " + noViews;
     }
 }

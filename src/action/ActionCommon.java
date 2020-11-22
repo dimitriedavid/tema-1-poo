@@ -9,12 +9,12 @@ public abstract class ActionCommon {
 
     /**
      * This method executes the current
-     * action specified in the `action` field.
+     * action specified in the {@link ActionCommon#action} field.
      * @return the result string
      */
     public abstract String execute();
 
-    public ActionCommon(Action action) {
+    public ActionCommon(final Action action) {
         this.action = action;
         this.database = Database.getInstance();
     }

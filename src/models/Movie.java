@@ -2,10 +2,11 @@ package models;
 
 import java.util.ArrayList;
 
-public class Movie extends Show {
+public final class Movie extends Show {
     private final int duration;
 
-    public Movie(String title, int year, ArrayList<String> cast, ArrayList<String> genres, final int duration) {
+    public Movie(final String title, final int year, final ArrayList<String> cast,
+                 final ArrayList<String> genres, final int duration) {
         super(title, year, cast, genres);
         this.duration = duration;
     }

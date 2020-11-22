@@ -10,12 +10,12 @@ import models.Action;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class ActionWorker {
-    private class ActionResult {
+public final class ActionWorker {
+    private static class ActionResult {
         private final int id;
         private final String message;
 
-        public ActionResult(int id, String message) {
+        ActionResult(final int id, final String message) {
             this.id = id;
             this.message = message;
         }
@@ -29,13 +29,19 @@ public class ActionWorker {
         }
     }
 
-    private Database database;
+    private final Database database;
 
-    public ActionWorker(Database database) {
+    public ActionWorker(final Database database) {
         this.database = database;
     }
 
-    public void executeAllActions(JSONArray arrayResult) {
+    /**
+     * This method iterates through all the actions in the {@link ActionWorker#database}
+     * and executes each of them, updating <code>arrayResult</code> with the result of
+     * the action.
+     * @param arrayResult JSONArray that is updated with each action executed
+     */
+    public void executeAllActions(final JSONArray arrayResult) {
         database.getActions().forEach(action -> {
             // exec action
             ActionResult result = externalExecute(action);
@@ -51,26 +57,20 @@ public class ActionWorker {
     }
 
     // actual action parsing
-    private ActionResult externalExecute(Action action) {
+    private ActionResult externalExecute(final Action action) {
         // get action class based on action_type
         ActionCommon actionCommon;
 
         try {
-            switch (action.getActionType()) {
-                case "command":
-                    actionCommon = new Command(action);
-                    break;
-                case "query":
-                    actionCommon = new Query(action);
-                    break;
-                case "recommendation":
-                    actionCommon = new Recommendation(action);
-                    break;
-                default:
-                    throw new ExecutionControl.NotImplementedException("action type not implemented");
-            }
+            actionCommon = switch (action.getActionType()) {
+                case "command" -> new Command(action);
+                case "query" -> new Query(action);
+                case "recommendation" -> new Recommendation(action);
+                default -> throw new ExecutionControl.NotImplementedException("action type not "
+                        + "implemented");
+            };
         } catch (Exception e) {
-            return null;
+            return new ActionResult(action.getActionId(), e.getMessage());
         }
 
         // execute external action based on type
