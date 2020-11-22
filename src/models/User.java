@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public final class User {
@@ -8,6 +9,7 @@ public final class User {
     private final String subscriptionType;
     private final Map<String, Integer> history;
     private final ArrayList<String> favoriteMovies;
+    private final Map<String, Double> ratingsHistory;
 
     public User(final String username, final String subscriptionType,
                 final Map<String, Integer> history, final ArrayList<String> favoriteMovies) {
@@ -15,6 +17,7 @@ public final class User {
         this.subscriptionType = subscriptionType;
         this.history = history;
         this.favoriteMovies = favoriteMovies;
+        this.ratingsHistory = new HashMap<>();
     }
 
     public String getUsername() {
@@ -31,5 +34,18 @@ public final class User {
 
     public ArrayList<String> getFavoriteMovies() {
         return favoriteMovies;
+    }
+
+    public Map<String, Double> getRatingsHistory() {
+        return ratingsHistory;
+    }
+
+    /**
+     * Check if show was viewed
+     * @param title title of the show
+     * @return true if show was viewed at least once else false
+     */
+    public boolean isShowViewed(final String title) {
+        return history.containsKey(title);
     }
 }

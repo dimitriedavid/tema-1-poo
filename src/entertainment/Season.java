@@ -44,6 +44,18 @@ public final class Season {
         this.ratings = ratings;
     }
 
+    public int getCurrentSeason() {
+        return currentSeason;
+    }
+
+    /**
+     * Add grade to season
+     * @param grade to be added
+     */
+    public void addRating(final double grade) {
+        ratings.add(grade);
+    }
+
     @Override
     public String toString() {
         return "Episode{"

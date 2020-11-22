@@ -23,4 +23,13 @@ public final class Serial extends Show {
     public ArrayList<Season> getSeasons() {
         return seasons;
     }
+
+    @Override
+    public void addRating(final double grade, final int season) {
+        Season currSeason = seasons.stream()
+                                   .filter(x -> x.getCurrentSeason() == season)
+                                   .findFirst()
+                                   .orElse(null);
+        currSeason.addRating(grade);
+    }
 }

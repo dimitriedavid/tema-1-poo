@@ -36,4 +36,13 @@ public abstract class Show {
     public final int getViews() {
         return views;
     }
+
+    // abstract functions
+
+    /**
+     * Adds a rating to a Movie / Serial
+     * @param grade grade to be added
+     * @param season if Serial, specifies season
+     */
+    public abstract void addRating(double grade, int season);
 }
