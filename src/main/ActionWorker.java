@@ -39,6 +39,7 @@ public final class ActionWorker {
      * This method iterates through all the actions in the {@link ActionWorker#database}
      * and executes each of them, updating <code>arrayResult</code> with the result of
      * the action.
+     *
      * @param arrayResult JSONArray that is updated with each action executed
      */
     public void executeAllActions(final JSONArray arrayResult) {
@@ -62,7 +63,8 @@ public final class ActionWorker {
     }
 
     // actual action parsing
-    private ActionResult externalExecute(final Action action) throws ExecutionControl.NotImplementedException {
+    private ActionResult externalExecute(final Action action) throws
+            ExecutionControl.NotImplementedException {
         // get action class based on action_type
         ActionCommon actionCommon;
 

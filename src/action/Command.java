@@ -76,7 +76,7 @@ public final class Command extends ActionCommon {
         String seasonTitle = show.getTitle()
                 + ((action.getSeasonNumber() == 0) ? "$" + action.getSeasonNumber() : null);
         if (userRatingsHistory.contains(seasonTitle)) {
-            return "error -> " + show.getTitle() + " is already rated";
+            return "error -> " + show.getTitle() + " has been already rated";
         }
 
         // add rating to show

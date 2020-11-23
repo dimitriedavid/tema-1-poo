@@ -1,7 +1,6 @@
 package models;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public final class User {
@@ -48,5 +47,9 @@ public final class User {
      */
     public boolean isShowViewed(final String title) {
         return history.containsKey(title);
+    }
+
+    public int getRatingsCount() {
+        return ratingsHistory.size();
     }
 }

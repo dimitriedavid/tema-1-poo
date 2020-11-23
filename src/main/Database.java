@@ -122,14 +122,14 @@ public final class Database {
              ));
     }
 
-    private final void parseUserFavorites(ArrayList<String> favoriteShows) {
+    private void parseUserFavorites(final ArrayList<String> favoriteShows) {
         for (String showTitle : favoriteShows) {
             Show show = getShowByTitle(showTitle);
             show.addFavoriteCount();
         }
     }
 
-    private final void parseUserViews(Map<String, Integer> history) {
+    private void parseUserViews(final Map<String, Integer> history) {
         for (Map.Entry<String, Integer> historyEntry : history.entrySet()) {
             Show show = getShowByTitle(historyEntry.getKey());
             show.addViewCount(historyEntry.getValue());

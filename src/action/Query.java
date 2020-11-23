@@ -5,6 +5,8 @@ import models.Action;
 import models.Movie;
 import models.Serial;
 import models.Show;
+import models.User;
+
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,7 +21,7 @@ public final class Query extends ActionCommon {
 
     @Override
     public String execute() throws ExecutionControl.NotImplementedException {
-        String result = null;
+        String result;
         result = switch (action.getCriteria()) {
             case "average" -> null;
             case "awards" -> null;
@@ -27,40 +29,31 @@ public final class Query extends ActionCommon {
             case "ratings" -> ratings();
             case "favorite" -> favorite();
             case "longest" -> longest();
-            case "most_viewed" -> most_viewed();
-            case "num_ratings" -> null;
+            case "most_viewed" -> mostViewed();
+            case "num_ratings" -> numRatings();
             default -> throw new ExecutionControl.NotImplementedException("query criteria not"
                     + "implemented");
         };
         return "Query result: [" + result + "]";
     }
 
-    private interface QueryCommon {
-        void applyFilter();
+//    private class QueryActor {
+//        public void applyFilter() {
+//
+//        }
+//
+//        public String generateResult() {
+//            return null;
+//        }
+//    }
 
-        String generateResult();
-    }
-
-    private class QueryActor implements QueryCommon {
-        @Override
-        public void applyFilter() {
-
-        }
-
-        @Override
-        public String generateResult() {
-            return null;
-        }
-    }
-
-    private class QueryVideo implements QueryCommon {
+    private class QueryVideo {
         private ArrayList<Show> shows;
 
         QueryVideo() {
             shows = database.getShows();
         }
 
-        @Override
         public void applyFilter() {
             Stream<Show> stream = shows.stream();
 
@@ -74,7 +67,7 @@ public final class Query extends ActionCommon {
             // year
             if (action.getFilters().get(0).get(0) != null) {
                 // get year
-                Integer yearFilter = Integer.parseInt(action.getFilters().get(0).get(0));
+                int yearFilter = Integer.parseInt(action.getFilters().get(0).get(0));
                 // apply filter
                 stream = stream.filter(x -> x.getYear() == yearFilter);
             }
@@ -96,7 +89,6 @@ public final class Query extends ActionCommon {
             shows = stream.collect(Collectors.toCollection(ArrayList::new));
         }
 
-        @Override
         public String generateResult() {
             // truncate shows at number elements
             int upperBound = Math.min(shows.size(), action.getNumber());
@@ -110,35 +102,55 @@ public final class Query extends ActionCommon {
             return String.join(", ", titles);
         }
 
-        public ArrayList<Show> getShows() {
-            return shows;
-        }
-
-        public void setShows(final ArrayList<Show> shows) {
-            this.shows = shows;
-        }
-
-        public void sort(Comparator<Show> comparator) {
+        public void sort(final Comparator<Show> comparator) {
+            Comparator<Show> actualComparator = comparator;
             if (action.getSortType().equals("desc")) {
-                comparator = comparator.reversed();
+                actualComparator = comparator.reversed();
             }
             // apply sort
-            ArrayList<Show> sortedShows = this.getShows().stream()
-                                              .sorted(comparator)
-                                              .collect(Collectors.toCollection(ArrayList::new));
-            this.setShows(sortedShows);
+            this.shows = this.shows.stream()
+                                   .sorted(actualComparator)
+                                   .collect(Collectors.toCollection(ArrayList::new));
         }
     }
 
-    private class QueryUser implements QueryCommon {
-        @Override
-        public void applyFilter() {
+    private class QueryUser {
+        private ArrayList<User> users;
 
+        QueryUser() {
+            this.users = database.getUsers();
         }
 
-        @Override
+        public void applyFilter() {
+            Stream<User> stream = users.stream();
+
+            // select only users that have rated
+            stream = stream.filter(x -> x.getRatingsCount() != 0);
+            users = stream.collect(Collectors.toCollection(ArrayList::new));
+        }
+
         public String generateResult() {
-            return null;
+            // truncate shows at number elements
+            int upperBound = Math.min(users.size(), action.getNumber());
+            ArrayList<User> truncatedUsers = new ArrayList<>(users.subList(0, upperBound));
+
+            // select only usernames
+            ArrayList<String> usernames = truncatedUsers.stream()
+                                                     .map(User::getUsername)
+                                                     .collect(Collectors
+                                                             .toCollection(ArrayList::new));
+            return String.join(", ", usernames);
+        }
+
+        public void sort(final Comparator<User> comparator) {
+            Comparator<User> actualComparator = comparator;
+            if (action.getSortType().equals("desc")) {
+                actualComparator = comparator.reversed();
+            }
+            // apply sort
+            this.users = this.users.stream()
+                                   .sorted(actualComparator)
+                                   .collect(Collectors.toCollection(ArrayList::new));
         }
     }
 
@@ -153,8 +165,8 @@ public final class Query extends ActionCommon {
         // custom sort
         Comparator<Show> comparator = Comparator.comparingDouble(Show::getShowRating)
                                                 .thenComparing(Show::getTitle);
-
         queryVideo.sort(comparator);
+
         return queryVideo.generateResult();
     }
 
@@ -168,8 +180,8 @@ public final class Query extends ActionCommon {
         // custom sort
         Comparator<Show> comparator = Comparator.comparingDouble(Show::getFavoritesCount)
                                                 .thenComparing(Show::getTitle);
-
         queryVideo.sort(comparator);
+
         return queryVideo.generateResult();
     }
 
@@ -182,12 +194,12 @@ public final class Query extends ActionCommon {
         // custom sort
         Comparator<Show> comparator = Comparator.comparingDouble(Show::getDuration)
                                                 .thenComparing(Show::getTitle);
-
         queryVideo.sort(comparator);
+
         return queryVideo.generateResult();
     }
 
-    private String most_viewed() {
+    private String mostViewed() {
         QueryVideo queryVideo = new QueryVideo();
 
         // apply common filters
@@ -197,8 +209,22 @@ public final class Query extends ActionCommon {
         // custom sort
         Comparator<Show> comparator = Comparator.comparingDouble(Show::getViewsCount)
                                                 .thenComparing(Show::getTitle);
-
         queryVideo.sort(comparator);
+
         return queryVideo.generateResult();
+    }
+
+    private String numRatings() {
+        QueryUser queryUser = new QueryUser();
+
+        // apply common filters
+        queryUser.applyFilter();
+
+        // custom sort
+        Comparator<User> comparator = Comparator.comparingInt(User::getRatingsCount)
+                                                .thenComparing(User::getUsername);
+        queryUser.sort(comparator);
+
+        return queryUser.generateResult();
     }
 }

@@ -56,6 +56,10 @@ public final class Season {
         ratings.add(grade);
     }
 
+    /**
+     * This method returns the average rating for the season
+     * @return double that represents the mean rating
+     */
     public double getSeasonRating() {
         if (ratings.size() == 0) {
             return 0;
