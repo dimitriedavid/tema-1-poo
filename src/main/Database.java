@@ -9,6 +9,7 @@ import models.Movie;
 import models.Serial;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public final class Database {
     private final ArrayList<Actor> actors = new ArrayList<>();
@@ -58,17 +59,6 @@ public final class Database {
                      )
              ));
 
-        // users
-        input.getUsers()
-             .forEach(user -> users.add(
-                     new User(
-                             user.getUsername(),
-                             user.getSubscriptionType(),
-                             user.getHistory(),
-                             user.getFavoriteMovies()
-                     )
-             ));
-
         // movies
         input.getMovies()
              .forEach(movie -> shows.add(
@@ -94,6 +84,23 @@ public final class Database {
                      )
              ));
 
+        // users
+        // placed under shows to parse favorites
+        input.getUsers()
+             .forEach(user -> {
+                 users.add(
+                         new User(
+                                 user.getUsername(),
+                                 user.getSubscriptionType(),
+                                 user.getHistory(),
+                                 user.getFavoriteMovies()
+                         )
+                 );
+                 // parse favorites to update each show
+                 parseUserFavorites(user.getFavoriteMovies());
+                 parseUserViews(user.getHistory());
+             });
+
         // actions
         input.getCommands()
              .forEach(cmd -> actions.add(
@@ -114,6 +121,21 @@ public final class Database {
                      )
              ));
     }
+
+    private final void parseUserFavorites(ArrayList<String> favoriteShows) {
+        for (String showTitle : favoriteShows) {
+            Show show = getShowByTitle(showTitle);
+            show.addFavoriteCount();
+        }
+    }
+
+    private final void parseUserViews(Map<String, Integer> history) {
+        for (Map.Entry<String, Integer> historyEntry : history.entrySet()) {
+            Show show = getShowByTitle(historyEntry.getKey());
+            show.addViewCount(historyEntry.getValue());
+        }
+    }
+
 
     public ArrayList<Actor> getActors() {
         return actors;

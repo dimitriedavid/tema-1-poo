@@ -32,4 +32,19 @@ public final class Serial extends Show {
                                    .orElse(null);
         currSeason.addRating(grade);
     }
+
+    @Override
+    public double getShowRating() {
+        return seasons.stream().mapToDouble(Season::getSeasonRating).sum() / seasons.size();
+    }
+
+    @Override
+    public boolean isRated() {
+        return seasons.stream().anyMatch(x -> x.isRated());
+    }
+
+    @Override
+    public int getDuration() {
+        return seasons.stream().mapToInt(Season::getDuration).sum();
+    }
 }

@@ -56,6 +56,13 @@ public final class Season {
         ratings.add(grade);
     }
 
+    public double getSeasonRating() {
+        if (ratings.size() == 0) {
+            return 0;
+        }
+        return ratings.stream().mapToDouble(Double::doubleValue).sum() / ratings.size();
+    }
+
     @Override
     public String toString() {
         return "Episode{"
@@ -64,6 +71,10 @@ public final class Season {
                 + ", duration="
                 + duration
                 + '}';
+    }
+
+    public boolean isRated() {
+        return ratings.size() != 0;
     }
 }
 

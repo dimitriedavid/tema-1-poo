@@ -14,18 +14,14 @@ public final class Command extends ActionCommon {
     }
 
     @Override
-    public String execute() {
-        try {
-            return switch (action.getType()) {
-                case "view" -> view();
-                case "favorite" -> favorite();
-                case "rating" -> rating();
-                default -> throw new ExecutionControl.NotImplementedException("action not"
-                        + "implemented");
-            };
-        } catch (Exception e) {
-            return e.getMessage();
-        }
+    public String execute() throws ExecutionControl.NotImplementedException {
+        return switch (action.getType()) {
+            case "view" -> view();
+            case "favorite" -> favorite();
+            case "rating" -> rating();
+            default -> throw new ExecutionControl.NotImplementedException("action not"
+                    + "implemented");
+        };
     }
 
     private String view() {
@@ -38,6 +34,7 @@ public final class Command extends ActionCommon {
         noViews += 1;
         history.put(show.getTitle(), noViews);
 
+        show.addViewCount();
         return "success -> " + show.getTitle() + " was viewed with total views of " + noViews;
     }
 
@@ -58,6 +55,7 @@ public final class Command extends ActionCommon {
         }
 
         // add show to fav
+        show.addFavoriteCount();
         favoriteMovies.add(show.getTitle());
         return "success -> " + show.getTitle() + " was added as favourite";
     }
@@ -66,7 +64,7 @@ public final class Command extends ActionCommon {
         User user = database.getUserByUsername(action.getUsername());
         Show show = database.getShowByTitle(action.getTitle());
 
-        Map<String, Double> userRatingsHistory = user.getRatingsHistory();
+        ArrayList<String> userRatingsHistory = user.getRatingsHistory();
 
         // check if show was not viewed
         if (!user.isShowViewed(show.getTitle())) {
@@ -74,12 +72,16 @@ public final class Command extends ActionCommon {
         }
 
         // duplicate check
-        if (userRatingsHistory.containsKey(show.getTitle())) {
+        // get season title or movie title (show title + $ + seasonNumber -> if this is a serial)
+        String seasonTitle = show.getTitle()
+                + ((action.getSeasonNumber() == 0) ? "$" + action.getSeasonNumber() : null);
+        if (userRatingsHistory.contains(seasonTitle)) {
             return "error -> " + show.getTitle() + " is already rated";
         }
 
         // add rating to show
         show.addRating(action.getGrade(), action.getSeasonNumber());
+        userRatingsHistory.add(seasonTitle);
         return "success -> " + show.getTitle() + " was rated with " + action.getGrade() + " by "
                 + user.getUsername();
     }

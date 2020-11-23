@@ -44,7 +44,12 @@ public final class ActionWorker {
     public void executeAllActions(final JSONArray arrayResult) {
         database.getActions().forEach(action -> {
             // exec action
-            ActionResult result = externalExecute(action);
+            ActionResult result = null;
+            try {
+                result = externalExecute(action);
+            } catch (ExecutionControl.NotImplementedException e) {
+                e.printStackTrace();
+            }
 
             // gen JSON Obj
             JSONObject object = new JSONObject();
@@ -57,21 +62,17 @@ public final class ActionWorker {
     }
 
     // actual action parsing
-    private ActionResult externalExecute(final Action action) {
+    private ActionResult externalExecute(final Action action) throws ExecutionControl.NotImplementedException {
         // get action class based on action_type
         ActionCommon actionCommon;
 
-        try {
-            actionCommon = switch (action.getActionType()) {
-                case "command" -> new Command(action);
-                case "query" -> new Query(action);
-                case "recommendation" -> new Recommendation(action);
-                default -> throw new ExecutionControl.NotImplementedException("action type not "
-                        + "implemented");
-            };
-        } catch (Exception e) {
-            return new ActionResult(action.getActionId(), e.getMessage());
-        }
+        actionCommon = switch (action.getActionType()) {
+            case "command" -> new Command(action);
+            case "query" -> new Query(action);
+            case "recommendation" -> new Recommendation(action);
+            default -> throw new ExecutionControl.NotImplementedException("action type not "
+                    + "implemented");
+        };
 
         // execute external action based on type
         String result = actionCommon.execute();

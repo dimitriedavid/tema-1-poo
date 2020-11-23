@@ -1,5 +1,6 @@
 package action;
 
+import jdk.jshell.spi.ExecutionControl;
 import main.Database;
 import models.Action;
 
@@ -12,7 +13,7 @@ public abstract class ActionCommon {
      * action specified in the {@link ActionCommon#action} field.
      * @return the result string
      */
-    public abstract String execute();
+    public abstract String execute() throws ExecutionControl.NotImplementedException;
 
     public ActionCommon(final Action action) {
         this.action = action;

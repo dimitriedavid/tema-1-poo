@@ -13,12 +13,26 @@ public final class Movie extends Show {
         ratings = new ArrayList<>();
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
     @Override
     public void addRating(final double grade, final int season) {
         ratings.add(grade);
+    }
+
+    @Override
+    public double getShowRating() {
+        if (ratings.size() == 0) {
+            return 0;
+        }
+        return ratings.stream().mapToDouble(Double::doubleValue).sum() / ratings.size();
+    }
+
+    @Override
+    public boolean isRated() {
+        return ratings.size() != 0;
+    }
+
+    @Override
+    public int getDuration() {
+        return duration;
     }
 }
