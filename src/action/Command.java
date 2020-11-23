@@ -74,7 +74,7 @@ public final class Command extends ActionCommon {
         // duplicate check
         // get season title or movie title (show title + $ + seasonNumber -> if this is a serial)
         String seasonTitle = show.getTitle()
-                + ((action.getSeasonNumber() == 0) ? "$" + action.getSeasonNumber() : null);
+                + ((action.getSeasonNumber() != 0) ? "$" + action.getSeasonNumber() : null);
         if (userRatingsHistory.contains(seasonTitle)) {
             return "error -> " + show.getTitle() + " has been already rated";
         }
