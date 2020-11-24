@@ -10,6 +10,7 @@ import models.Serial;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public final class Database {
     private final ArrayList<Actor> actors = new ArrayList<>();
@@ -177,5 +178,17 @@ public final class Database {
                     .filter(x -> title.equals(x.getTitle()))
                     .findFirst()
                     .orElse(null);
+    }
+
+    /**
+     * Search the database for shows that have the actor
+     *
+     * @param actorName to be searched
+     * @return found shows
+     */
+    public ArrayList<Show> getShowsByActorName(final String actorName) {
+        return shows.stream()
+                    .filter(x -> x.getCast().contains(actorName))
+                    .collect(Collectors.toCollection(ArrayList::new));
     }
 }

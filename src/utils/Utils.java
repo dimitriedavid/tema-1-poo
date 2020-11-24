@@ -6,9 +6,13 @@ import entertainment.Genre;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
 
 /**
  * The class contains static methods that helps with parsing.
@@ -20,6 +24,17 @@ public final class Utils {
      * for coding style
      */
     private Utils() {
+    }
+
+    public static ArrayList<String> getWordsFromText(final String text) {
+        return Arrays.stream(text.toLowerCase().split("[^a-zA-Z]"))
+                                // remove any ""
+                                 .filter(x -> !x.isEmpty())
+                                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public static boolean isWordInText(final ArrayList<String> haystack, final String needle) {
+        return haystack.contains(needle.toLowerCase());
     }
 
     /**

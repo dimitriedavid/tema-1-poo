@@ -1,2 +1,17 @@
 Starting audit...
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:14:8: Unused import - java.lang.reflect.Array. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:16:8: Unused import - java.util.Collections. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:18:8: Unused import - java.util.HashMap. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:19:8: Unused import - java.util.Map. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:21:8: Unused import - java.util.stream.Collector. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:55:20: Parameter actors should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:93:31: Parameter actors should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:247:58: '3' is a magic number. [MagicNumber]
+[ERROR] E:\Fac\tema-1-poo\.\src\action\Query.java:250: Line is longer than 100 characters (found 102). [LineLength]
+[ERROR] E:\Fac\tema-1-poo\.\src\models\Actor.java:39:38: Parameter averageShowRating should be final. [FinalParameters]
+[ERROR] E:\Fac\tema-1-poo\.\src\utils\Utils.java:9:8: Unused import - java.lang.reflect.Array. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\utils\Utils.java:12:8: Unused import - java.util.List. [UnusedImports]
+[ERROR] E:\Fac\tema-1-poo\.\src\utils\Utils.java:29:5: Missing a Javadoc comment. [MissingJavadocMethod]
+[ERROR] E:\Fac\tema-1-poo\.\src\utils\Utils.java:36:5: Missing a Javadoc comment. [MissingJavadocMethod]
 Audit done.
+Checkstyle ends with 14 errors.

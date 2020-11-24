@@ -10,6 +10,7 @@ public final class Actor {
     private final String careerDescription;
     private final ArrayList<String> filmography;
     private final Map<ActorsAwards, Integer> awards;
+    private double averageShowRating = 0;
 
     public Actor(final String name, final String careerDescription,
                  final ArrayList<String> filmography, final Map<ActorsAwards, Integer> awards) {
@@ -33,5 +34,17 @@ public final class Actor {
 
     public Map<ActorsAwards, Integer> getAwards() {
         return awards;
+    }
+
+    public void setAverageShowRating(double averageShowRating) {
+        this.averageShowRating = averageShowRating;
+    }
+
+    public double getAverageShowRating() {
+        return averageShowRating;
+    }
+
+    public int getAwardsCount() {
+        return awards.values().stream().mapToInt(Integer::intValue).sum();
     }
 }

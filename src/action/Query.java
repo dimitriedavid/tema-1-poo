@@ -1,16 +1,24 @@
 package action;
 
+import actor.ActorsAwards;
 import jdk.jshell.spi.ExecutionControl;
 import models.Action;
+import models.Actor;
 import models.Movie;
 import models.Serial;
 import models.Show;
 import models.User;
+import utils.Utils;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,9 +31,9 @@ public final class Query extends ActionCommon {
     public String execute() throws ExecutionControl.NotImplementedException {
         String result;
         result = switch (action.getCriteria()) {
-            case "average" -> null;
-            case "awards" -> null;
-            case "filter_description" -> null;
+            case "average" -> average();
+            case "awards" -> awards();
+            case "filter_description" -> filterDescription();
             case "ratings" -> ratings();
             case "favorite" -> favorite();
             case "longest" -> longest();
@@ -37,21 +45,61 @@ public final class Query extends ActionCommon {
         return "Query result: [" + result + "]";
     }
 
-//    private class QueryActor {
-//        public void applyFilter() {
-//
-//        }
-//
-//        public String generateResult() {
-//            return null;
-//        }
-//    }
+    private class QueryActor {
+        private ArrayList<Actor> actors;
+
+        QueryActor() {
+            this.actors = database.getActors();
+        }
+
+        QueryActor(ArrayList<Actor> actors) {
+            this.actors = actors;
+        }
+
+        public void customFilter(final Predicate<Actor> customFilter) {
+            Stream<Actor> stream = actors.stream();
+            stream = stream.filter(customFilter);
+            actors = stream.collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        public String generateResult() {
+            // truncate shows at number elements
+            int upperBound = Math.min(actors.size(), action.getNumber());
+            ArrayList<Actor> truncatedUsers = new ArrayList<>(actors.subList(0, upperBound));
+
+            // select only usernames
+            ArrayList<String> names = truncatedUsers.stream()
+                                                    .map(Actor::getName)
+                                                    .collect(Collectors
+                                                            .toCollection(ArrayList::new));
+            return String.join(", ", names);
+        }
+
+        public void sort(final Comparator<Actor> comparator) {
+            Comparator<Actor> actualComparator = comparator;
+            if (action.getSortType().equals("desc")) {
+                actualComparator = comparator.reversed();
+            }
+            // apply sort
+            this.actors = this.actors.stream()
+                                     .sorted(actualComparator)
+                                     .collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        public ArrayList<Actor> getActors() {
+            return actors;
+        }
+
+        public void setActors(ArrayList<Actor> actors) {
+            this.actors = actors;
+        }
+    }
 
     private class QueryVideo {
         private ArrayList<Show> shows;
 
         QueryVideo() {
-            shows = database.getShows();
+            this.shows = database.getShows();
         }
 
         public void applyFilter() {
@@ -136,9 +184,9 @@ public final class Query extends ActionCommon {
 
             // select only usernames
             ArrayList<String> usernames = truncatedUsers.stream()
-                                                     .map(User::getUsername)
-                                                     .collect(Collectors
-                                                             .toCollection(ArrayList::new));
+                                                        .map(User::getUsername)
+                                                        .collect(Collectors
+                                                                .toCollection(ArrayList::new));
             return String.join(", ", usernames);
         }
 
@@ -155,6 +203,90 @@ public final class Query extends ActionCommon {
     }
 
     // actual action execution
+    private String average() {
+        // this method is a bit messy... I know
+        ArrayList<Actor> actors = database.getActors();
+
+        ArrayList<Actor> chosenActors = new ArrayList<>();
+
+        for (Actor actor : actors) {
+            ArrayList<Show> shows = database.getShowsByActorName(actor.getName());
+            // remove shows with rating 0
+            shows = shows.stream()
+                         .filter(x -> x.getShowRating() != 0)
+                         .collect(Collectors.toCollection(ArrayList::new));
+            // calculate rating
+            double ratingSum = shows.stream().mapToDouble(Show::getShowRating).sum();
+            if (ratingSum != 0) {
+                double rating = ratingSum / shows.size();
+                actor.setAverageShowRating(rating);
+                chosenActors.add(actor);
+            }
+        }
+
+        // custom sort
+        Comparator<Actor> comparator = Comparator.comparingDouble(Actor::getAverageShowRating)
+                                                 .thenComparing(Actor::getName);
+        if (action.getSortType().equals("desc")) {
+            comparator = comparator.reversed();
+        }
+        // apply sort
+        chosenActors = chosenActors.stream()
+                                   .sorted(comparator)
+                                   .collect(Collectors.toCollection(ArrayList::new));
+
+        QueryActor queryActor = new QueryActor(chosenActors);
+        return queryActor.generateResult();
+    }
+
+    private String awards() {
+        QueryActor queryActor = new QueryActor();
+
+        // apply custom filter
+        ArrayList<ActorsAwards> awardFilter = action.getFilters()
+                                                    .get(3)
+                                                    .stream()
+                                                    .map(Utils::stringToAwards)
+                                                    .collect(Collectors.toCollection(ArrayList::new));
+        queryActor.customFilter(actor -> {
+            for (ActorsAwards award : awardFilter) {
+                if (!actor.getAwards().containsKey(award)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // custom sort
+        Comparator<Actor> comparator = Comparator.comparingInt(Actor::getAwardsCount)
+                                                 .thenComparing(Actor::getName);
+        queryActor.sort(comparator);
+
+        return queryActor.generateResult();
+    }
+
+    private String filterDescription() {
+        QueryActor queryActor = new QueryActor();
+
+        // apply custom filter
+        ArrayList<String> wordsFilter = new ArrayList<>(action.getFilters().get(2));
+        queryActor.customFilter(actor -> {
+            ArrayList<String> descWords = Utils.getWordsFromText(actor.getCareerDescription());
+            for (String keyword : wordsFilter) {
+                if (!Utils.isWordInText(descWords, keyword)) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // custom sort
+        Comparator<Actor> comparator = Comparator.comparing(Actor::getName);
+        queryActor.sort(comparator);
+
+        return queryActor.generateResult();
+    }
+
     private String ratings() {
         QueryVideo queryVideo = new QueryVideo();
 
