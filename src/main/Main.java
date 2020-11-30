@@ -70,14 +70,14 @@ public final class Main {
         Writer fileWriter = new Writer(filePath2);
         JSONArray arrayResult = new JSONArray();
 
-        // New clean DB
+        // New empty DB
         Database database = Database.getNewInstance();
 
         // Populate DB -> add input to database
         database.populate(input);
 
         // Call ActionWorker to execute actions and update arrayResult
-        ActionWorker actionWorker = new ActionWorker(database);
+        ActionWorker actionWorker = new ActionWorker();
         actionWorker.executeAllActions(arrayResult);
 
         fileWriter.closeJSON(arrayResult);

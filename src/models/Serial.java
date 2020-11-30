@@ -30,6 +30,7 @@ public final class Serial extends Show {
                                    .filter(x -> x.getCurrentSeason() == season)
                                    .findFirst()
                                    .orElse(null);
+        assert currSeason != null;
         currSeason.addRating(grade);
     }
 
@@ -40,7 +41,7 @@ public final class Serial extends Show {
 
     @Override
     public boolean isRated() {
-        return seasons.stream().anyMatch(x -> x.isRated());
+        return seasons.stream().anyMatch(Season::isRated);
     }
 
     @Override

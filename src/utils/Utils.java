@@ -6,12 +6,10 @@ import entertainment.Genre;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +24,11 @@ public final class Utils {
     private Utils() {
     }
 
+    /**
+     * Split a text into words, by all non-letter characters.
+     * @param text to be splitted
+     * @return array of words, ignoring empty strings
+     */
     public static ArrayList<String> getWordsFromText(final String text) {
         return Arrays.stream(text.toLowerCase().split("[^a-zA-Z]"))
                                 // remove any ""
@@ -33,6 +36,12 @@ public final class Utils {
                                  .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * This method finds a word in a list of words.
+     * @param haystack list of words that represents a text
+     * @param needle to be searched in the text
+     * @return boolean that shows if the needle is in the haystack
+     */
     public static boolean isWordInText(final ArrayList<String> haystack, final String needle) {
         return haystack.contains(needle.toLowerCase());
     }
@@ -104,7 +113,7 @@ public final class Utils {
     /**
      * Transforms an array of JSON's into a map
      * @param jsonActors array of JSONs
-     * @return a map with ActorsAwardsa as key and Integer as value
+     * @return a map with ActorsAwards as key and Integer as value
      */
     public static Map<ActorsAwards, Integer> convertAwards(final JSONArray jsonActors) {
         Map<ActorsAwards, Integer> awards = new LinkedHashMap<>();

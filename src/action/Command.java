@@ -28,12 +28,17 @@ public final class Command extends ActionCommon {
         User user = database.getUserByUsername(action.getUsername());
         Show show = database.getShowByTitle(action.getTitle());
 
+        // get user history
         Map<String, Integer> history = user.getHistory();
 
+        // try to get no of views for the title or 0 if none
         Integer noViews = history.getOrDefault(show.getTitle(), 0);
         noViews += 1;
+
+        // update history
         history.put(show.getTitle(), noViews);
 
+        // update show view count
         show.addViewCount();
         return "success -> " + show.getTitle() + " was viewed with total views of " + noViews;
     }
@@ -45,7 +50,7 @@ public final class Command extends ActionCommon {
         ArrayList<String> favoriteMovies = user.getFavoriteMovies();
 
         // check if show was not viewed
-        if (!user.isShowViewed(show.getTitle())) {
+        if (user.isShowNotViewed(show.getTitle())) {
             return "error -> " + show.getTitle() + " is not seen";
         }
 
@@ -67,7 +72,7 @@ public final class Command extends ActionCommon {
         ArrayList<String> userRatingsHistory = user.getRatingsHistory();
 
         // check if show was not viewed
-        if (!user.isShowViewed(show.getTitle())) {
+        if (user.isShowNotViewed(show.getTitle())) {
             return "error -> " + show.getTitle() + " is not seen";
         }
 

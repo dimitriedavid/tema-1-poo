@@ -75,4 +75,10 @@ public final class Constants {
     public static final int MAX_LENGTH = 50;
 
     // add any constants you think you may use
+    public static final int ORDER_FILTER_YEAR = 0;
+    public static final int ORDER_FILTER_GENRE = 1;
+    public static final int ORDER_FILTER_WORDS = 2;
+    public static final int ORDER_FILTER_AWARDS = 3;
+    public static final int FIRST_ELEMENT_INDEX = 0;
+
 }

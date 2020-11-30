@@ -27,14 +27,14 @@ and then I execute all the actions, updating `arrayResult`.
 
 ## Database
 I decided to store all my input data in a database-like class called `Database`.
-
+ 
 This has a method `populate`, that takes an `Input` object and parses it into private arrays of
 each model enumerated above. In this parsing, I also count the number of show favorites count
 and show view count.
 
 In the `Database` class, I also implemented some helper methods like `getUserByUsername` or
 `getShowsByGenre`.
-
+ 
 ## ActionWorker
 `ActionWorker` is a class that actually executes all the actions and update the result array.
 Here, the first action type `switch` appears. (comparing action_type)
@@ -43,7 +43,7 @@ these classes take the current action as parameter in their constructors, and th
 database instance.
 
 ## ActionCommon
-This class is a parent for all the Action executors classes (`Command`, `Query` or
+This class is a parent for all the Action executors classes (`Command`, `Query` or 
 `Recommendation`). It has an abstract method `execute` that executes the action and returns a
 result String.
 

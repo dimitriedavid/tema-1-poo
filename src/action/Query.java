@@ -10,17 +10,17 @@ import models.Show;
 import models.User;
 import utils.Utils;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static common.Constants.FIRST_ELEMENT_INDEX;
+import static common.Constants.ORDER_FILTER_AWARDS;
+import static common.Constants.ORDER_FILTER_GENRE;
+import static common.Constants.ORDER_FILTER_WORDS;
+import static common.Constants.ORDER_FILTER_YEAR;
 
 public final class Query extends ActionCommon {
     public Query(final Action action) {
@@ -52,7 +52,7 @@ public final class Query extends ActionCommon {
             this.actors = database.getActors();
         }
 
-        QueryActor(ArrayList<Actor> actors) {
+        QueryActor(final ArrayList<Actor> actors) {
             this.actors = actors;
         }
 
@@ -90,7 +90,7 @@ public final class Query extends ActionCommon {
             return actors;
         }
 
-        public void setActors(ArrayList<Actor> actors) {
+        public void setActors(final ArrayList<Actor> actors) {
             this.actors = actors;
         }
     }
@@ -113,16 +113,21 @@ public final class Query extends ActionCommon {
             };
 
             // year
-            if (action.getFilters().get(0).get(0) != null) {
+            if (action.getFilters().get(ORDER_FILTER_YEAR).get(FIRST_ELEMENT_INDEX) != null) {
                 // get year
-                int yearFilter = Integer.parseInt(action.getFilters().get(0).get(0));
+                int yearFilter = Integer.parseInt(action.getFilters()
+                                                        .get(ORDER_FILTER_YEAR)
+                                                        .get(FIRST_ELEMENT_INDEX));
                 // apply filter
                 stream = stream.filter(x -> x.getYear() == yearFilter);
             }
 
-            if (action.getFilters().get(1).get(0) != null) {
+            // genre
+            if (action.getFilters().get(ORDER_FILTER_GENRE).get(FIRST_ELEMENT_INDEX) != null) {
                 // get genre
-                String genreFilter = action.getFilters().get(1).get(0);
+                String genreFilter = action.getFilters()
+                                           .get(ORDER_FILTER_GENRE)
+                                           .get(FIRST_ELEMENT_INDEX);
                 // apply filter
                 stream = stream.filter(x -> x.getGenres().contains(genreFilter));
             }
@@ -244,10 +249,11 @@ public final class Query extends ActionCommon {
 
         // apply custom filter
         ArrayList<ActorsAwards> awardFilter = action.getFilters()
-                                                    .get(3)
+                                                    .get(ORDER_FILTER_AWARDS)
                                                     .stream()
                                                     .map(Utils::stringToAwards)
-                                                    .collect(Collectors.toCollection(ArrayList::new));
+                                                    .collect(Collectors
+                                                                    .toCollection(ArrayList::new));
         queryActor.customFilter(actor -> {
             for (ActorsAwards award : awardFilter) {
                 if (!actor.getAwards().containsKey(award)) {
@@ -269,7 +275,8 @@ public final class Query extends ActionCommon {
         QueryActor queryActor = new QueryActor();
 
         // apply custom filter
-        ArrayList<String> wordsFilter = new ArrayList<>(action.getFilters().get(2));
+        ArrayList<String> wordsFilter = new ArrayList<>(action.getFilters()
+                                                              .get(ORDER_FILTER_WORDS));
         queryActor.customFilter(actor -> {
             ArrayList<String> descWords = Utils.getWordsFromText(actor.getCareerDescription());
             for (String keyword : wordsFilter) {

@@ -28,15 +28,11 @@ public final class Actor {
         return careerDescription;
     }
 
-    public ArrayList<String> getFilmography() {
-        return filmography;
-    }
-
     public Map<ActorsAwards, Integer> getAwards() {
         return awards;
     }
 
-    public void setAverageShowRating(double averageShowRating) {
+    public void setAverageShowRating(final double averageShowRating) {
         this.averageShowRating = averageShowRating;
     }
 

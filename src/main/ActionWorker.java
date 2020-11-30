@@ -31,8 +31,8 @@ public final class ActionWorker {
 
     private final Database database;
 
-    public ActionWorker(final Database database) {
-        this.database = database;
+    public ActionWorker() {
+        this.database = Database.getInstance();
     }
 
     /**
@@ -54,6 +54,7 @@ public final class ActionWorker {
 
             // gen JSON Obj
             JSONObject object = new JSONObject();
+            assert result != null;
             object.put(Constants.ID_STRING, result.getId());
             object.put(Constants.MESSAGE, result.getMessage());
 

@@ -1,5 +1,6 @@
 package main;
 
+import entertainment.Genre;
 import fileio.Input;
 import models.Action;
 import models.Actor;
@@ -9,8 +10,10 @@ import models.Movie;
 import models.Serial;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class Database {
     private final ArrayList<Actor> actors = new ArrayList<>();
@@ -123,21 +126,6 @@ public final class Database {
              ));
     }
 
-    private void parseUserFavorites(final ArrayList<String> favoriteShows) {
-        for (String showTitle : favoriteShows) {
-            Show show = getShowByTitle(showTitle);
-            show.addFavoriteCount();
-        }
-    }
-
-    private void parseUserViews(final Map<String, Integer> history) {
-        for (Map.Entry<String, Integer> historyEntry : history.entrySet()) {
-            Show show = getShowByTitle(historyEntry.getKey());
-            show.addViewCount(historyEntry.getValue());
-        }
-    }
-
-
     public ArrayList<Actor> getActors() {
         return actors;
     }
@@ -190,5 +178,50 @@ public final class Database {
         return shows.stream()
                     .filter(x -> x.getCast().contains(actorName))
                     .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * This method returns a list of all Genres names
+     * ordered by their popularity (number of views of all the shows
+     * in that genre)
+     * @return list of sorted genres
+     */
+    public ArrayList<String> getGenresByPopularity() {
+        return Stream.of(Genre.values())
+                     .map(Genre::toString)
+                     .sorted(Comparator.comparing(this::getGenreRating)
+                                                           .reversed())
+                     .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * This method returns a list with all the shows that are in a given genre
+     * @param genre to be present in shows
+     * @return show list
+     */
+    public ArrayList<Show> getShowsByGenre(final String genre) {
+        return shows.stream()
+                    .filter(x -> x.getGenres().contains(genre))
+                    .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    // private methods
+    private void parseUserFavorites(final ArrayList<String> favoriteShows) {
+        for (String showTitle : favoriteShows) {
+            Show show = getShowByTitle(showTitle);
+            show.addFavoriteCount();
+        }
+    }
+
+    private void parseUserViews(final Map<String, Integer> history) {
+        for (Map.Entry<String, Integer> historyEntry : history.entrySet()) {
+            Show show = getShowByTitle(historyEntry.getKey());
+            show.addViewCount(historyEntry.getValue());
+        }
+    }
+
+    private Double getGenreRating(final String genre) {
+        ArrayList<Show> showsInGenre = getShowsByGenre(genre);
+        return showsInGenre.stream().mapToDouble(Show::getViewsCount).sum();
     }
 }

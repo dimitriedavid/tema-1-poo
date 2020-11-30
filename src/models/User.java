@@ -45,8 +45,8 @@ public final class User {
      * @param title title of the show
      * @return true if show was viewed at least once else false
      */
-    public boolean isShowViewed(final String title) {
-        return history.containsKey(title);
+    public boolean isShowNotViewed(final String title) {
+        return !history.containsKey(title);
     }
 
     public int getRatingsCount() {
